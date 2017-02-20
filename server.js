@@ -19,10 +19,7 @@ app.get('/posts', (req, res) => {
 		.find()
 		.exec()
 		.then(posts => {
-			res.json({
-				posts: posts.map(
-					(posts) => post.apiRepr())
-			});
+			res.json(posts.map(post => post.apiRepr()));
 		})
 		.catch(
 			err => {
@@ -35,7 +32,7 @@ app.get('/posts/:id', (req, res) => {
 	BlogPost
 		.findById(req.params.id)
 		.exec()
-		.then(posts =>res.json(posts.apiRepr()))
+		.then(post =>res.json(post.apiRepr()))
 		.catch(err => {
 			console.error(err);
 				res.status(500).json({message: 'Internal server error'});
@@ -106,9 +103,6 @@ app.put('/post/:id', (req, res) => {
 		.catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
-app.use('*', function(req, res) {
-	res.status(404).json({message: 'Not Found'});
-});
 
 app.delete('/:id', (req, res) => {
 	BlogPost
@@ -116,8 +110,14 @@ app.delete('/:id', (req, res) => {
 	.exec()
 	.then(() => {
 		console.log(`Deleted blog post with id \`${req.params.ID}\``);
+		res.status(404).json({message: 'Not Found'});
 	});
 });
+
+app.use('*', function(req, res) {
+	res.status(404).json({message: 'Not Found'});
+});
+
 
 
 
@@ -140,6 +140,7 @@ function runServer(databaseURL=DATABASE_URL, port=PORT){
 			});
 		});
 	});
+}
 
 	function closeServer(){
 		return mongoose.disconnect().then(() => {
@@ -159,15 +160,5 @@ function runServer(databaseURL=DATABASE_URL, port=PORT){
 	if(require.main === module) {
 		runServer().catch(err => console.error(err));
 	};
-}
 
-
-
-
-
-
-
-
-
-
-
+	module.exports = {runServer, app, closeServer};
