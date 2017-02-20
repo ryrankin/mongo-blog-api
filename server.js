@@ -20,7 +20,8 @@ app.get('/posts', (req, res) => {
 		.exec()
 		.then(posts => {
 			res.json(posts.map(post => post.apiRepr()));
-		})
+			})
+
 		.catch(
 			err => {
 				console.error(err);
@@ -40,7 +41,7 @@ app.get('/posts/:id', (req, res) => {
 	});
 
 
-app.post('/post', (req, res) => {
+app.post('/posts', (req, res) => {
 	const requiredFields = ['title', 'content', 'author'];
 	for (let i=0; i <requiredFields.length; i++){
 		const field = requiredFields[i];
@@ -78,7 +79,7 @@ app.delete('posts/:id', (req, res) => {
 });
 
 
-app.put('/post/:id', (req, res) => {
+app.put('/posts/:id', (req, res) => {
 	if(!(req.params.id && req.body.id && req.params.id === req.body.id)){
 		const message =(
 			`Request path id (${req.params.id}) and request body ` +
