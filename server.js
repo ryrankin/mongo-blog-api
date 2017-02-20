@@ -9,6 +9,7 @@ const {PORT, DATABASE_URL} = require('./config');
 const {BlogPost} = require('./models');
 
 const app = express();
+app.use(morgan('common'));
 app.use(bodyParser.json());
 
 
@@ -17,10 +18,10 @@ app.get('/posts', (req, res) => {
 	BlogPost
 		.find()
 		.exec()
-		.then(blogposts => {
+		.then(posts => {
 			res.json({
-				blogposts: blogposts.map(
-					(blogpost) => blogpost.apiRepr())
+				posts: posts.map(
+					(posts) => post.apiRepr())
 			});
 		})
 		.catch(
@@ -34,7 +35,7 @@ app.get('/posts/:id', (req, res) => {
 	BlogPost
 		.findById(req.params.id)
 		.exec()
-		.then(blogpost =>res.json(blogpost.apiRepr()))
+		.then(posts =>res.json(posts.apiRepr()))
 		.catch(err => {
 			console.error(err);
 				res.status(500).json({message: 'Internal server error'});
@@ -49,6 +50,7 @@ app.post('/post', (req, res) => {
 		if (!(field in req.body)) {
 			const message = `Missing \`{field}\` in request body`
 			console.error(message);
+			return res.status(400).send(message);
 		}
 	}
 
@@ -59,9 +61,9 @@ app.post('/post', (req, res) => {
 			author: req.body.author
 		})
 		.then(
-			blogpost => res.status(201).json(blogpost.apiRepr()))
+			posts => res.status(201).json(posts.apiRepr()))
 		.catch(err =>{
-			res.status(400).json({message: 'Internal server error'});
+			res.status(500).json({message: 'Internal server error'});
 		});
 	});
 
@@ -74,7 +76,7 @@ app.delete('posts/:id', (req, res) => {
 	})
 	.catch(err => {
 		console.error(err);
-		res.status(500).json({error: 'something went terribly wrong'});
+		res.status(500).json({error: 'Internal server error'});
 	});
 });
 
