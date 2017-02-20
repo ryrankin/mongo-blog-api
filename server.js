@@ -40,7 +40,7 @@ app.get('/posts/:id', (req, res) => {
 				res.status(500).json({message: 'Internal server error'});
 		});
 	});
-};
+
 
 app.post('/post', (req, res) => {
 	const requiredFields = ['title', 'content', 'author'];
@@ -103,7 +103,7 @@ let server;
 
 function runServer(databaseURL=DATABASE_URL, port=PORT){
 	return new Promise((resolve, reject) => {
-		mongoose.connect.(databaseURL, err => {
+		mongoose.connect(databaseURL, err => {
 			if (err){
 				return reject(err);
 			}
