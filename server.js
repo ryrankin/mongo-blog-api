@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-const {PORT, DATABASE_URL} = require('.config');
+const {PORT, DATABASE_URL} = require('./config');
 const {BlogPost} = require('./models');
 
 const app = express();
@@ -62,7 +62,7 @@ app.post('/post', (req, res) => {
 		.then(
 			blogpost => res.status(201).json(blogpost.apiRepr()))
 		.catch(err =>{
-			res.status(500).json({message: 'Internal server error'});
+			res.status(400).json({message: 'Internal server error'});
 		});
 	});
 
