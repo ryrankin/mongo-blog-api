@@ -3,14 +3,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 
-mongoose.Promise = global.Promise;
-
-const {PORT, DATABASE_URL} = require('./config');
+const {DATABASE_URL, PORT} = require('./config');
 const {BlogPost} = require('./models');
 
 const app = express();
 app.use(morgan('common'));
 app.use(bodyParser.json());
+
+mongoose.Promise = global.Promise;
+
 
 
 
@@ -18,14 +19,14 @@ app.get('/posts', (req, res) => {
 	BlogPost
 		.find()
 		.exec()
-		.then(posts => {
-			res.json(posts.map(post => post.apiRepr()));
+		.then(blogs => {
+			res.json(blogs.map(blog => blog.apiRepr()));
 			})
 
 		.catch(
 			err => {
 				console.error(err);
-				res.status(500).json({message: 'Internal server error'});
+				res.status(500).json({error: 'Internal server error'});
 			});
 		});
 
@@ -33,10 +34,10 @@ app.get('/posts/:id', (req, res) => {
 	BlogPost
 		.findById(req.params.id)
 		.exec()
-		.then(post =>res.json(post.apiRepr()))
+		.then(blog =>res.json(blog.apiRepr()))
 		.catch(err => {
 			console.error(err);
-				res.status(500).json({message: 'Internal server error'});
+				res.status(500).json({error: 'Internal server error'});
 		});
 	});
 
@@ -46,7 +47,7 @@ app.post('/posts', (req, res) => {
 	for (let i=0; i <requiredFields.length; i++){
 		const field = requiredFields[i];
 		if (!(field in req.body)) {
-			const message = `Missing \`{field}\` in request body`
+			const message = `Missing \`{field}\` in request body`;
 			console.error(message);
 			return res.status(400).send(message);
 		}
@@ -59,7 +60,7 @@ app.post('/posts', (req, res) => {
 			author: req.body.author
 		})
 		.then(
-			posts => res.status(201).json(posts.apiRepr()))
+			post => res.status(201).json(post.apiRepr()))
 		.catch(err =>{
 			res.status(500).json({message: 'Internal server error'});
 		});
@@ -69,7 +70,7 @@ app.delete('posts/:id', (req, res) => {
 	BlogPost
 	.findByIdAndRemove(req.params.id)
 	.exec()
-	.then(() => {
+	.then(blog => {
 		res.status(204).json({message: 'success'});
 	})
 	.catch(err => {
