@@ -1,6 +1,7 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require('mongoose');
+const morgan = require('morgan');
 
 mongoose.Promise = global.Promise;
 
@@ -15,7 +16,6 @@ app.use(bodyParser.json());
 app.get('/posts', (req, res) => {
 	BlogPost
 		.find()
-		.limit(10)
 		.exec()
 		.then(blogposts => {
 			res.json({
@@ -54,11 +54,10 @@ app.post('/post', (req, res) => {
 
 	BlogPost
 		.create({
-			id: req.body.id,
 			title: req.body.title,
 			content: req.body.content,
-			author: req.body.author, 
-			created: req.body.created})
+			author: req.body.author
+		})
 		.then(
 			blogpost => res.status(201).json(blogpost.apiRepr()))
 		.catch(err =>{
@@ -66,8 +65,21 @@ app.post('/post', (req, res) => {
 		});
 	});
 
+app.delete('posts/:id', (req, res) => {
+	BlogPost
+	.findByIdAndRemove(req.params.id)
+	.exec()
+	.then(() => {
+		res.status(204).json({message: 'success'});
+	})
+	.catch(err => {
+		console.error(err);
+		res.status(500).json({error: 'something went terribly wrong'});
+	});
+});
 
-app.put('/post:id', (req, res) => {
+
+app.put('/post/:id', (req, res) => {
 	if(!(req.params.id && req.body.id && req.params.id === req.body.id)){
 		const message =(
 			`Request path id (${req.params.id}) and request body ` +
@@ -94,6 +106,15 @@ app.put('/post:id', (req, res) => {
 
 app.use('*', function(req, res) {
 	res.status(404).json({message: 'Not Found'});
+});
+
+app.delete('/:id', (req, res) => {
+	BlogPost
+	.findByIdAndRemove(req.params.id)
+	.exec()
+	.then(() => {
+		console.log(`Deleted blog post with id \`${req.params.ID}\``);
+	});
 });
 
 
