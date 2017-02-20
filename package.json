@@ -1,20 +1,26 @@
 {
   "name": "mongo-blog-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "mongo-blog-api",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "test": "mocha"
   },
-  "keywords": [],
+  "keywords": [
+    "node",
+    "hyperdev",
+    "express",
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "mongoose": "^4.7.2",
-    "morgan": "^1.7.0"
+    "morgan": "^1.7.0",
+    "uuid": "^2.0.3"
+
   },
   "devDependencies": {
     "chai": "^3.5.0",
