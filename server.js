@@ -86,7 +86,7 @@ app.put('/posts/:id', (req, res) => {
 			`Request path id (${req.params.id}) and request body ` +
 			`(${req.body.id}) must match`);
 		console.error(message);
-		res.status(400).json({message});
+		res.status(400).json({message: message});
 	}
 
 	const toUpdate = {};
